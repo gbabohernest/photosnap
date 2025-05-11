@@ -6,7 +6,7 @@ const userSchemaValidation = Joi.object({
     .max(20)
     .trim(true)
     .required()
-    .pattern(new RegExp(/^[A-Za-z][A-Za-z0-9_]{2,19}$/))
+    .pattern(/^[A-Za-z][A-Za-z0-9_]{2,19}$/)
     .messages({
       "string.pattern.base":
         "Username cannot start with a number and must not contain spaces.",
@@ -16,12 +16,14 @@ const userSchemaValidation = Joi.object({
     }),
 
   email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .email({ tlds: { allow: false } })
+    .pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)
     .required()
     .trim(true)
-    .lowercase()
     .messages({
-      "string.email": "Enter a valid email ID .com or .net",
+      "string.email": "Email domain must be .com or .net",
+      "string.pattern.base":
+        "Email must be in all lowercase letters without uppercase letters, TLD 3 or 4 letters",
       "string.empty": "Email is a required field",
     }),
 
@@ -32,4 +34,14 @@ const userSchemaValidation = Joi.object({
   }),
 });
 
-export { userSchemaValidation };
+const authSchema = Joi.object({
+  email: Joi.string()
+    .required()
+    .trim(true)
+    .messages({ "string.empty": "Email is a required field" }),
+  password: Joi.string()
+    .required()
+    .messages({ "string.empty": "Password is a required field" }),
+});
+
+export { userSchemaValidation, authSchema };
