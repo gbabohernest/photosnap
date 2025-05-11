@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 import {
   DEFAULT_AVATAR_PUBLIC_ID,
   DEFAULT_AVATAR_URL,
@@ -8,7 +9,7 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true,
+      required: [true, "username is required"],
       unique: true,
       trim: true,
       lowercase: true,
@@ -17,27 +18,31 @@ const userSchema = new mongoose.Schema(
       validate: {
         validator: (val) => /^[A-Za-z][A-Za-z0-9_]{2,29}$/.test(val),
         message:
-          "username cannot start with a number, and no space(s) in the name.",
+          "username cannot start with a number and must not contain spaces.",
       },
+      index: true,
     },
 
     email: {
       type: String,
-      required: true,
+      required: [true, "email is required"],
       unique: true,
       trim: true,
-      lowercase: true,
+      uppercase: false,
       validate: {
-        validator: (value) => /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value),
-        message: "Please enter a valid email address",
+        validator: function (value) {
+          return /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,4}$/.test(value);
+        },
+        message: "Email must be in all lowercase letters no uppercase letters",
       },
+      index: true,
     },
 
     password: {
       type: String,
-      required: true,
+      required: [true, "Password is required"],
       minLength: [6, "Password must be at least 6 characters long"],
-      maxLength: [128, "Password cannot exceed 128 character"],
+      maxLength: [128, "Password cannot exceed 128 characters"],
     },
 
     role: {
@@ -63,6 +68,14 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
