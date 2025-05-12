@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 const { BAD_REQUEST, NOT_FOUND, CONFLICT, UNAUTHORIZED } = StatusCodes;
 
 class APIError extends Error {
-  constructor(message, statusCode = 500) {
+  constructor(message, statusCode) {
     super(message);
     this.message = message;
     this.statusCode = statusCode;
