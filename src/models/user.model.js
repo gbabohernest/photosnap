@@ -3,7 +3,12 @@ import bcrypt from "bcryptjs";
 import {
   DEFAULT_AVATAR_PUBLIC_ID,
   DEFAULT_AVATAR_URL,
+  JWT_EXPIRES_IN,
+  JWT_SECRET,
 } from "../config/env.config.js";
+import jwt from "jsonwebtoken";
+import APIError from "../utils/ApiError.js";
+import { StatusCodes } from "http-status-codes";
 
 const userSchema = new mongoose.Schema(
   {
@@ -76,6 +81,29 @@ userSchema.pre("save", async function (next) {
 
   next();
 });
+
+userSchema.methods.passwordVerified = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+userSchema.methods.getToken = async function () {
+  try {
+    return await jwt.sign(
+      {
+        userId: this._id,
+        name: this.username,
+        userRole: this.role,
+      },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN },
+    );
+  } catch (error) {
+    throw new APIError(
+      "Something went wrong, failed to generate user token",
+      500,
+    );
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 
