@@ -17,6 +17,7 @@ const imageSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+      required: [true, "Image description is required"],
       trim: true,
       maxLength: [100, "Image description cannot exceeds 100 characters"],
     },
@@ -55,7 +56,7 @@ const imageSchema = new mongoose.Schema(
         {
           validator: function (value) {
             return value.every(
-              (val) => typeof val === "string" && value.trim() !== "",
+              (val) => typeof val === "string" && val.trim() !== "",
             );
           },
           message: "Tag must be a non-empty string",
@@ -66,3 +67,7 @@ const imageSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+const Image = mongoose.model("Image", imageSchema);
+
+export default Image;
