@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import APIError from "../utils/ApiError.js";
 
 const imageSchema = new mongoose.Schema(
   {
@@ -36,13 +37,13 @@ const imageSchema = new mongoose.Schema(
 
     tags: {
       type: [String],
-      required: [true, "Image tag is required"],
+      required: [true, "Tags are required"],
       validate: [
         {
           validator: function (value) {
             return Array.isArray(value);
           },
-          message: "Tags must an array of non empty strings",
+          message: "Tags must an array of strings",
         },
 
         {
@@ -50,7 +51,7 @@ const imageSchema = new mongoose.Schema(
             return value.length > 0;
           },
 
-          message: "Tags must contain at least one tag",
+          message: "At least one tag is required",
         },
 
         {
@@ -59,7 +60,7 @@ const imageSchema = new mongoose.Schema(
               (val) => typeof val === "string" && val.trim() !== "",
             );
           },
-          message: "Tag must be a non-empty string",
+          message: "Each tag must be a non-empty string",
         },
       ],
       index: true,
@@ -67,6 +68,15 @@ const imageSchema = new mongoose.Schema(
   },
   { timestamps: true },
 );
+
+imageSchema.pre("save", function (next) {
+  if (!Array.isArray(this.tags)) {
+    const err = APIError.badRequest("Tags must be an array of strings");
+    return next(err);
+  }
+  console.log("pre save hook was reached");
+  next();
+});
 
 const Image = mongoose.model("Image", imageSchema);
 
