@@ -7,26 +7,28 @@ const imageSchemaValidation = Joi.object({
     .trim(true)
     .pattern(/^[A-Za-z][A-Za-z0-9\s_.,-]*$/)
     .messages({
-      "string.pattern.base": "Image Title must start with a letter",
-      "string.max": "Image title cannot exceeds 50 characters",
-      "string.empty": "Image Title is a required field.",
+      "string.pattern.base": "Title must start with a letter",
+      "string.max": "Title cannot exceeds 50 characters",
+      "string.empty": "Title is a required field.",
+      "any.required": "Title is required",
     }),
 
   description: Joi.string().required().max(100).trim(true).messages({
-    "string.empty": "Image description is a required field",
-    "string.max": "Image description cannot exceeds 100 characters",
+    "string.empty": "Description is a required field",
+    "string.max": "Description cannot exceeds 100 characters",
+    "any.required": "Description is required",
   }),
 
-  url: Joi.string().required().trim(true).messages({
-    "string.empty": "URL is a required field",
-  }),
-
-  publicId: Joi.string().required().trim(true).messages({
-    "string.empty": "PublicId is a required field",
-  }),
-
-  tags: Joi.array().items(Joi.string().trim(true).min(1)).required().messages({
-    "array.min": "At least one image tag is required",
-    "array.empty": "Tags is a required field",
-  }),
+  tags: Joi.array()
+    .min(1)
+    .items(Joi.string().trim(true).min(1))
+    .required()
+    .messages({
+      "array.base": "Tags must be an array",
+      "array.min": "Tags must contain at least 1 items",
+      "string.empty": "Each tag must be a non-empty string",
+      "any.required": "Tags is required",
+    }),
 });
+
+export default imageSchemaValidation;
