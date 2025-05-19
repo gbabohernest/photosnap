@@ -19,6 +19,17 @@ const imageSchemaValidation = Joi.object({
     "any.required": "Description is required",
   }),
 
+  category: Joi.string()
+    .trim(true)
+    .required()
+    .pattern(/^[a-zA-Z0-9_]+$/)
+    .messages({
+      "string.empty": "Category is required",
+      "any.required": "Category is required",
+      "string.pattern.base":
+        "Category must be a single word with no spaces. Only letters, numbers, and underscores allowed",
+    }),
+
   tags: Joi.array()
     .min(1)
     .items(Joi.string().trim(true).min(1))
