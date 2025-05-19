@@ -1,6 +1,7 @@
 import APIError from "./ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import cloudinary from "../config/cloudinary.config.js";
+import fs from "node:fs/promises";
 
 async function uploadToCloudinary(asset) {
   try {
@@ -17,6 +18,8 @@ async function uploadToCloudinary(asset) {
       `FAIL to upload file: ${error.message}`,
       StatusCodes.INTERNAL_SERVER_ERROR,
     );
+  } finally {
+    await fs.unlink(asset);
   }
 }
 
