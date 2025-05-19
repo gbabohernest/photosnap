@@ -5,8 +5,11 @@ import transactionsHelper from "../../../utils/mongoose.transaction.helper.js";
 import { StatusCodes } from "http-status-codes";
 import uploadToCloudinary from "../../../utils/uploader.js";
 import fs from "node:fs/promises";
+import deleteFromCloudinary from "../../../utils/delete-from-cloudinary.js";
 
 async function uploadImage(req, res, next) {
+  let imgPubId;
+
   try {
     if (!req.file || !req.file.path) {
       return next(
@@ -17,21 +20,24 @@ async function uploadImage(req, res, next) {
     const { value, error } = imageSchemaValidation.validate({ ...req.body });
 
     if (error) {
+      await fs.unlink(req.file.path);
       return next(APIError.badRequest(error?.details[0]?.message));
     }
 
     const { url, publicId } = await uploadToCloudinary(req.file.path);
+    imgPubId = publicId;
 
     await transactionsHelper(async (session) => {
       const image = await Image.create([{ ...value, url, publicId }], session);
 
-      await fs.unlink(req.file.path);
       return res
         .status(StatusCodes.OK)
         .json({ success: true, message: "upload successful", data: image[0] });
-    }, next);
+    });
   } catch (error) {
-    await fs.unlink(req.file.path);
+    if (imgPubId) {
+      await deleteFromCloudinary(imgPubId);
+    }
     next(error);
   }
 }
