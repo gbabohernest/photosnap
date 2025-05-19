@@ -24,7 +24,10 @@ const filter = (req, file, cb) => {
   const acceptedTypes = ["image/png", "image/jpeg", "image/gif"];
 
   if (!acceptedTypes.includes(file.mimetype)) {
-    cb(new APIError("Only JPEG, PNG, and GIF files are allowed"), false);
+    return cb(
+      APIError.badRequest("Only JPEG, PNG, and GIF files are allowed"),
+      false,
+    );
   }
 
   cb(null, true);
