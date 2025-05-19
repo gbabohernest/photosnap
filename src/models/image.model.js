@@ -1,13 +1,12 @@
 import mongoose from "mongoose";
-import APIError from "../utils/ApiError.js";
 
 const imageSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: [true, "Image title is required"],
+      required: [true, "Title is required"],
       trim: true,
-      maxLength: [50, "Image Title cannot exceeds 50 characters"],
+      maxLength: [50, "Title cannot exceeds 50 characters"],
       validate: {
         validator: function (value) {
           return /^[A-Za-z][A-Za-z0-9\s_.,-]*$/.test(value);
@@ -18,25 +17,46 @@ const imageSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "Image description is required"],
+      required: [true, "Description is required"],
       trim: true,
-      maxLength: [100, "Image description cannot exceeds 100 characters"],
+      maxLength: [100, "Description cannot exceeds 100 characters"],
     },
 
-    imageURL: {
+    url: {
       type: String,
-      required: [true, "image url is required"],
+      required: [true, "Image url is required"],
       trim: true,
     },
 
     publicId: {
       type: String,
-      required: [true, "image public id is required"],
+      required: [true, "Image public id is required"],
       trim: true,
     },
 
+    category: {
+      type: String,
+      required: [true, "Category is required"],
+      trim: true,
+      validate: {
+        validator: function (val) {
+          return /^[a-zA-Z0-9_]+$/.test(val);
+        },
+        message:
+          "Category must be a single word with no spaces. Only letters, numbers, and underscores allowed.",
+      },
+    },
+
+    uploaded_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Please provide the user whom uploaded this asset"],
+      index: true,
+    },
+
     tags: {
-      type: [String],
+      // type: [String],
+      type: mongoose.Schema.Types.Mixed,
       required: [true, "Tags are required"],
       validate: [
         {
@@ -66,17 +86,9 @@ const imageSchema = new mongoose.Schema(
       index: true,
     },
   },
+
   { timestamps: true },
 );
-
-imageSchema.pre("save", function (next) {
-  if (!Array.isArray(this.tags)) {
-    const err = APIError.badRequest("Tags must be an array of strings");
-    return next(err);
-  }
-  console.log("pre save hook was reached");
-  next();
-});
 
 const Image = mongoose.model("Image", imageSchema);
 
