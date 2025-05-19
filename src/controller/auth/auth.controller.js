@@ -49,30 +49,26 @@ async function signUp(req, res, next) {
 }
 
 async function signIn(req, res, next) {
-  try {
-    const value = await authSchema.validateAsync({ ...req.body });
+  const value = await authSchema.validateAsync({ ...req.body });
 
-    const user = await User.findOne(
-      { email: value.email },
-      "email password username role",
-      null,
-    );
-    if (!user) {
-      return next(APIError.unauthorized("Invalid Credential"));
-    }
-
-    if (!(await user.passwordVerified(value.password))) {
-      return next(APIError.unauthorized());
-    }
-
-    const token = await user.getToken();
-
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: "sign in successful", token, user });
-  } catch (err) {
-    next(APIError.badRequest(err.message));
+  const user = await User.findOne(
+    { email: value.email },
+    "email password username role",
+    null,
+  );
+  if (!user) {
+    return next(APIError.unauthorized("Invalid email"));
   }
+
+  if (!(await user.passwordVerified(value.password))) {
+    return next(APIError.unauthorized("Wrong password"));
+  }
+
+  const token = await user.getToken();
+
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, message: "sign in successful", token, user });
 }
 
 async function signOut(req, res) {
