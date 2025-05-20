@@ -123,6 +123,22 @@ userSchema.statics.login = async function (email, password) {
   return { token, user };
 };
 
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    const { _id, username, email, password, avatar, createdAt, updatedAt } =
+      ret;
+
+    return {
+      _id,
+      username,
+      email,
+      password,
+      avatar,
+      joined: createdAt,
+      lastUpdated: updatedAt,
+    };
+  },
+});
 const User = mongoose.model("User", userSchema);
 
 export default User;
