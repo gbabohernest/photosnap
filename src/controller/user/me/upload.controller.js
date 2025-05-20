@@ -27,13 +27,17 @@ async function uploadImage(req, res, next) {
     const { url, publicId } = await uploadToCloudinary(req.file.path);
     imgPubId = publicId;
 
-    await transactionsHelper(async (session) => {
-      const image = await Image.create([{ ...value, url, publicId }], session);
+    const image = await transactionsHelper(async (session) => {
+      const image = await Image.create(
+        [{ ...value, url, publicId, uploaded_by: req.userInfo.userId }],
+        session,
+      );
 
-      return res
-        .status(StatusCodes.OK)
-        .json({ success: true, message: "upload successful", data: image[0] });
+      return image[0];
     });
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "upload successful", image });
   } catch (error) {
     if (imgPubId) {
       await deleteFromCloudinary(imgPubId);
