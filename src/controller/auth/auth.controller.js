@@ -6,18 +6,13 @@ import {
   authSchema,
   userSchemaValidation,
 } from "../../utils/schema-validation/userSchema.validation.js";
+import { MAX_AGE, NODE_ENV } from "../../config/env.config.js";
 
 async function signUp(req, res, next) {
-  const { value, error } = userSchemaValidation.validate({
-    ...req.body,
-  });
+  const { value, error } = userSchemaValidation.validate(req.body);
 
   if (error) {
-    return next(
-      APIError.badRequest(
-        error?.details[0]?.message || "Bad Request, Please provide valid Data",
-      ),
-    );
+    return next(APIError.badRequest(error.details[0].message));
   }
 
   const { username, email, password } = value;
@@ -49,26 +44,24 @@ async function signUp(req, res, next) {
 }
 
 async function signIn(req, res, next) {
-  const value = await authSchema.validateAsync({ ...req.body });
+  const { value, error } = authSchema.validate(req.body);
 
-  const user = await User.findOne(
-    { email: value.email },
-    "email password username role",
-    null,
-  );
-  if (!user) {
-    return next(APIError.unauthorized("Invalid email"));
+  if (error) {
+    return next(APIError.badRequest(error.details[0].message));
   }
 
-  if (!(await user.passwordVerified(value.password))) {
-    return next(APIError.unauthorized("Wrong password"));
-  }
+  const { email, password } = value;
+  const { token, user } = await User.login(email, password);
 
-  const token = await user.getToken();
-
+  res.cookie("auth", token, {
+    maxAge: MAX_AGE,
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: NODE_ENV === "production" ? "lax" : "strict",
+  });
   res
     .status(StatusCodes.OK)
-    .json({ success: true, message: "sign in successful", token, user });
+    .json({ success: true, message: "sign in successful", user });
 }
 
 async function signOut(req, res) {
