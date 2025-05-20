@@ -99,10 +99,28 @@ userSchema.methods.getToken = async function () {
     );
   } catch (error) {
     throw new APIError(
-      "Something went wrong, failed to generate user token",
+      `Something went wrong, failed to generate user token: ${error.message}`,
       500,
     );
   }
+};
+
+userSchema.statics.login = async function (email, password) {
+  const user = await this.findOne({ email }, "password username role", null);
+
+  if (!user) {
+    throw APIError.unauthorized("Invalid Email ID.");
+  }
+
+  const isAuth = await user.passwordVerified(password);
+
+  if (!isAuth) {
+    throw APIError.unauthorized("Wrong Password");
+  }
+
+  const token = await user.getToken();
+
+  return { token, user };
 };
 
 const User = mongoose.model("User", userSchema);
