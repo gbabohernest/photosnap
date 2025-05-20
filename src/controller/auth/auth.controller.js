@@ -8,71 +8,67 @@ import {
 } from "../../utils/schema-validation/userSchema.validation.js";
 
 async function signUp(req, res, next) {
-  await transactionsHelper(async (session) => {
-    const { value, error } = userSchemaValidation.validate({
-      ...req.body,
-    });
+  const { value, error } = userSchemaValidation.validate({
+    ...req.body,
+  });
 
-    if (error) {
-      return next(
-        APIError.badRequest(
-          error?.details[0]?.message ||
-            "Bad Request, Please provide valid Data",
-        ),
-      );
-    }
-
-    const { username, email, password } = value;
-
-    const existingUser = await User.findOne(
-      { $or: [{ username }, { email }] },
-      "username email",
-      null,
+  if (error) {
+    return next(
+      APIError.badRequest(
+        error?.details[0]?.message || "Bad Request, Please provide valid Data",
+      ),
     );
+  }
 
-    if (existingUser) {
-      if (existingUser.username === username) {
-        return next(APIError.conflict("Username is already taken"));
-      }
+  const { username, email, password } = value;
 
-      if (existingUser.email === email) {
-        return next(APIError.conflict("Email is already registered"));
-      }
+  const existingUser = await User.findOne(
+    { $or: [{ username }, { email }] },
+    "username email",
+    null,
+  );
+
+  if (existingUser) {
+    if (existingUser.username === username) {
+      return next(APIError.conflict("Username is already taken"));
     }
 
-    const user = await User.create([{ username, email, password }], session);
+    if (existingUser.email === email) {
+      return next(APIError.conflict("Email is already registered"));
+    }
+  }
 
-    return res
-      .status(StatusCodes.CREATED)
-      .json({ success: true, message: "signup successful", data: user[0] });
-  }, next);
+  const user = await transactionsHelper(async (session) => {
+    const user = await User.create([{ username, email, password }], session);
+    return user[0];
+  });
+
+  res
+    .status(StatusCodes.CREATED)
+    .json({ success: true, message: "signup successful", user });
 }
 
 async function signIn(req, res, next) {
-  try {
-    const value = await authSchema.validateAsync({ ...req.body });
+  const value = await authSchema.validateAsync({ ...req.body });
 
-    const user = await User.findOne(
-      { email: value.email },
-      "email password username role",
-      null,
-    );
-    if (!user) {
-      return next(APIError.unauthorized("Invalid Credential"));
-    }
-
-    if (!(await user.passwordVerified(value.password))) {
-      return next(APIError.unauthorized());
-    }
-
-    const token = await user.getToken();
-
-    res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: "sign in successful", token, user });
-  } catch (err) {
-    next(APIError.badRequest(err.message));
+  const user = await User.findOne(
+    { email: value.email },
+    "email password username role",
+    null,
+  );
+  if (!user) {
+    return next(APIError.unauthorized("Invalid email"));
   }
+
+  if (!(await user.passwordVerified(value.password))) {
+    return next(APIError.unauthorized("Wrong password"));
+  }
+
+  const token = await user.getToken();
+
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, message: "sign in successful", token, user });
 }
 
 async function signOut(req, res) {

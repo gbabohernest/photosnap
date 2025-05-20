@@ -5,7 +5,7 @@ import mongoose from "mongoose";
  * Operations that changes the state of our database (write operations)
  */
 
-async function transactionsHelper(cb, next) {
+async function transactionsHelper(cb) {
   const session = await mongoose.startSession();
 
   try {
@@ -16,7 +16,8 @@ async function transactionsHelper(cb, next) {
     return respond;
   } catch (error) {
     await session.abortTransaction();
-    next(error);
+    // next(error);
+    throw error;
   } finally {
     await session.endSession();
   }
