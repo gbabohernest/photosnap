@@ -2,6 +2,9 @@ import User from "../../../models/user.model.js";
 import APIError from "../../../utils/ApiError.js";
 import { updateSchema } from "../../../utils/schema-validation/userSchema.validation.js";
 import transactionsHelper from "../../../utils/mongoose.transaction.helper.js";
+import { DEFAULT_AVATAR_PUBLIC_ID } from "../../../config/env.config.js";
+import deleteFromCloudinary from "../../../utils/delete-from-cloudinary.js";
+import uploadToCloudinary from "../../../utils/uploader.js";
 
 async function editMe(req, res) {
   const { userId } = req.userInfo;
@@ -26,13 +29,49 @@ async function editMe(req, res) {
       session,
       validateBeforeSave: true,
       validateModifiedOnly: true,
-      timestamps: false,
+      // timestamps: false,
     });
   });
 
-  res
-    .status(200)
-    .json({ success: true, message: "Update success", updatedUser });
+  res.status(200).json({
+    success: true,
+    message: "Account information updated successfully",
+    updatedUser,
+  });
 }
 
-export { editMe };
+async function updateAvatar(req, res) {
+  if (!req.file || !req.file.path) {
+    throw APIError.badRequest("Please add your avatar");
+  }
+
+  const user = await User.findById(
+    req.userInfo.userId,
+    "avatar avatarName",
+    null,
+  );
+
+  if (user && user.avatarName !== DEFAULT_AVATAR_PUBLIC_ID) {
+    await deleteFromCloudinary(user.avatarName);
+  }
+
+  const { url, publicId } = await uploadToCloudinary(req.file.path);
+
+  Object.assign(user, { avatar: url, avatarName: publicId });
+
+  const newAvatar = await transactionsHelper(async (session) => {
+    return await user.save({
+      session,
+      validateBeforeSave: true,
+      validateModifiedOnly: true,
+    });
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Avatar updated successfully",
+    avatar: newAvatar.avatar,
+  });
+}
+
+export { editMe, updateAvatar };
