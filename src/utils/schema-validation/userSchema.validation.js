@@ -43,7 +43,7 @@ const authSchema = Joi.object({
     .messages({ "string.empty": "Password is a required field" }),
 });
 
-const updateSchema = Joi.object({
+const updateUserSchema = Joi.object({
   email: Joi.string()
     .optional()
     .trim(true)
@@ -74,4 +74,4 @@ const updateSchema = Joi.object({
   }),
 });
 
-export { userSchemaValidation, authSchema, updateSchema };
+export { userSchemaValidation, authSchema, updateUserSchema };
