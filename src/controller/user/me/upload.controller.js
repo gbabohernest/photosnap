@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import uploadToCloudinary from "../../../utils/uploader.js";
 import fs from "node:fs/promises";
 import deleteFromCloudinary from "../../../utils/delete-from-cloudinary.js";
+import API_SUCCESS_RESPONSES from "../../../utils/api-success-responses.js";
 
 async function uploadImage(req, res, next) {
   let imgPubId;
@@ -36,8 +37,12 @@ async function uploadImage(req, res, next) {
       return image[0];
     });
     res
-      .status(StatusCodes.OK)
-      .json({ success: true, message: "upload successful", image });
+      .status(StatusCodes.CREATED)
+      .json({
+        success: true,
+        message: API_SUCCESS_RESPONSES.image.IMG_UPLOAD,
+        image,
+      });
   } catch (error) {
     if (imgPubId) {
       await deleteFromCloudinary(imgPubId);

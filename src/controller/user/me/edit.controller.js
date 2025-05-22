@@ -40,7 +40,7 @@ async function editMe(req, res) {
 
   res.status(StatusCodes.OK).json({
     success: true,
-    message: "Account information updated successfully",
+    message: API_SUCCESS_RESPONSES.account.UPDATED,
     updatedUser,
   });
 }
@@ -74,7 +74,7 @@ async function updateAvatar(req, res) {
 
   res.status(StatusCodes.OK).json({
     success: true,
-    message: "Avatar updated successfully",
+    message: API_SUCCESS_RESPONSES.avatar.UPDATED,
     avatar: newAvatar.avatar,
   });
 }
