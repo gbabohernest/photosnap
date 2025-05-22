@@ -1,5 +1,5 @@
 import Image from "../../../models/image.model.js";
-import imageSchemaValidation from "../../../utils/schema-validation/imageSchema.validation.js";
+import { imageSchemaValidation } from "../../../utils/schema-validation/imageSchema.validation.js";
 import APIError from "../../../utils/ApiError.js";
 import transactionsHelper from "../../../utils/mongoose.transaction.helper.js";
 import { StatusCodes } from "http-status-codes";
@@ -11,7 +11,7 @@ async function uploadImage(req, res, next) {
   let imgPubId;
 
   try {
-    if (!req.file || !req.file.path) {
+    if (!req.file) {
       return next(
         APIError.badRequest("Please provide a valid image file to upload."),
       );
@@ -27,13 +27,17 @@ async function uploadImage(req, res, next) {
     const { url, publicId } = await uploadToCloudinary(req.file.path);
     imgPubId = publicId;
 
-    await transactionsHelper(async (session) => {
-      const image = await Image.create([{ ...value, url, publicId }], session);
+    const image = await transactionsHelper(async (session) => {
+      const image = await Image.create(
+        [{ ...value, url, publicId, uploaded_by: req.userInfo.userId }],
+        session,
+      );
 
-      return res
-        .status(StatusCodes.OK)
-        .json({ success: true, message: "upload successful", data: image[0] });
+      return image[0];
     });
+    res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "upload successful", image });
   } catch (error) {
     if (imgPubId) {
       await deleteFromCloudinary(imgPubId);
