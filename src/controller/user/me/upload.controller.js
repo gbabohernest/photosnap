@@ -1,5 +1,5 @@
 import Image from "../../../models/image.model.js";
-import imageSchemaValidation from "../../../utils/schema-validation/imageSchema.validation.js";
+import { imageSchemaValidation } from "../../../utils/schema-validation/imageSchema.validation.js";
 import APIError from "../../../utils/ApiError.js";
 import transactionsHelper from "../../../utils/mongoose.transaction.helper.js";
 import { StatusCodes } from "http-status-codes";
@@ -11,7 +11,7 @@ async function uploadImage(req, res, next) {
   let imgPubId;
 
   try {
-    if (!req.file || !req.file.path) {
+    if (!req.file) {
       return next(
         APIError.badRequest("Please provide a valid image file to upload."),
       );
