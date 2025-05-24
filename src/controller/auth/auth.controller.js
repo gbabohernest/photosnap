@@ -7,6 +7,7 @@ import {
   userSchemaValidation,
 } from "../../utils/schema-validation/userSchema.validation.js";
 import { MAX_AGE, NODE_ENV } from "../../config/env.config.js";
+import API_SUCCESS_RESPONSES from "../../utils/api-success-responses.js";
 
 async function signUp(req, res, next) {
   const { value, error } = userSchemaValidation.validate(req.body);
@@ -40,7 +41,11 @@ async function signUp(req, res, next) {
 
   res
     .status(StatusCodes.CREATED)
-    .json({ success: true, message: "signup successful", user });
+    .json({
+      success: true,
+      message: API_SUCCESS_RESPONSES.account.SIGN_UP,
+      user,
+    });
 }
 
 async function signIn(req, res, next) {
@@ -61,7 +66,11 @@ async function signIn(req, res, next) {
   });
   res
     .status(StatusCodes.OK)
-    .json({ success: true, message: "sign in successful", user });
+    .json({
+      success: true,
+      message: API_SUCCESS_RESPONSES.account.SIGN_IN,
+      user,
+    });
 }
 
 async function signOut(req, res) {

@@ -9,6 +9,7 @@ import {
 import jwt from "jsonwebtoken";
 import APIError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
+import dateFormatter from "../utils/date-formatter.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -69,6 +70,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: DEFAULT_AVATAR_PUBLIC_ID,
+      index: true,
     },
   },
   { timestamps: true },
@@ -100,7 +102,7 @@ userSchema.methods.getToken = async function () {
   } catch (error) {
     throw new APIError(
       `Something went wrong, failed to generate user token: ${error.message}`,
-      500,
+      StatusCodes.INTERNAL_SERVER_ERROR,
     );
   }
 };
@@ -134,8 +136,8 @@ userSchema.set("toJSON", {
       email,
       password,
       avatar,
-      joined: createdAt,
-      lastUpdated: updatedAt,
+      joined: dateFormatter(createdAt),
+      lastUpdated: dateFormatter(updatedAt),
     };
   },
 });
