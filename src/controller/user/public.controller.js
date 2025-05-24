@@ -17,4 +17,24 @@ async function getImages(req, res) {
   res.status(200).json({ success: true, message: "list of images", images });
 }
 
-export { getImages };
+async function getImage(req, res) {
+  const { id: imageId } = req.params;
+
+  let image = await Image.findById(imageId);
+
+  if (!image) {
+    throw APIError.badRequest("Resource ID is invalid");
+  }
+
+  image = image.toObject();
+
+  const imgData = {
+    img: image.url,
+    title: image.title,
+    published: dateFormatter(image.updatedAt),
+  };
+
+  res.status(200).json({ success: true, message: "Image details", imgData });
+}
+
+export { getImage, getImages };
