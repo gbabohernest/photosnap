@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import dateFormatter from "../utils/date-formatter.js";
 
 const imageSchema = new mongoose.Schema(
   {
@@ -90,6 +91,28 @@ const imageSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+imageSchema.virtual("uploader", {
+  ref: "User",
+  localField: "uploaded_by",
+  foreignField: "_id",
+  justOne: true,
+  options: { select: "-joined -lastUpdated", lean: true },
+});
+
+imageSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    const { _id, description, createdAt, updatedAt } = ret;
+
+    return {
+      _id,
+      description,
+      uploaded: dateFormatter(createdAt),
+      updated: dateFormatter(updatedAt),
+      uploader: ret.uploader,
+    };
+  },
+});
 const Image = mongoose.model("Image", imageSchema);
 
 export default Image;
