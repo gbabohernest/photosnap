@@ -1,0 +1,20 @@
+import Image from "../../models/image.model.js";
+import APIError from "../../utils/ApiError.js";
+import dateFormatter from "../../utils/date-formatter.js";
+
+async function getImages(req, res) {
+  const images = await Image.find({}, "", null)
+    .sort({ updatedAt: -1 })
+    .populate("uploader", "username avatar  -_id");
+
+  if (images.length === 0) {
+    return res.status(200).json({
+      success: true,
+      message: "No image found, sign up and start uploading.",
+    });
+  }
+
+  res.status(200).json({ success: true, message: "list of images", images });
+}
+
+export { getImages };
