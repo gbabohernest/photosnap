@@ -23,7 +23,7 @@ async function getImages(req, res) {
 async function getImage(req, res) {
   const { id: imageId } = req.params;
 
-  let image = await Image.findById(imageId).populate(
+  let image = await Image.findById(imageId, "", null).populate(
     "uploader",
     "username avatar -_id",
   );
