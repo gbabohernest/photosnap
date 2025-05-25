@@ -1,11 +1,14 @@
 import Image from "../../models/image.model.js";
 import APIError from "../../utils/ApiError.js";
 import dateFormatter from "../../utils/date-formatter.js";
+import paginate from "../../utils/paginate.js";
 
 async function getImages(req, res) {
-  const images = await Image.find({}, "", null)
-    .sort({ updatedAt: -1 })
-    .populate("uploader", "username avatar  -_id");
+  const images = await paginate(Image, req, {
+    sort: "-updateAt",
+    searchFields: ["title", "description", "category", "tags"],
+    virtual: "uploader",
+  });
 
   if (images.length === 0) {
     return res.status(200).json({
@@ -20,7 +23,10 @@ async function getImages(req, res) {
 async function getImage(req, res) {
   const { id: imageId } = req.params;
 
-  let image = await Image.findById(imageId);
+  let image = await Image.findById(imageId).populate(
+    "uploader",
+    "username avatar -_id",
+  );
 
   if (!image) {
     throw APIError.badRequest("Resource ID is invalid");
@@ -28,10 +34,18 @@ async function getImage(req, res) {
 
   image = image.toObject();
 
+  const { url, title, description, createdAt, updatedAt, uploader, category } =
+    image;
+
   const imgData = {
-    img: image.url,
-    title: image.title,
-    published: dateFormatter(image.updatedAt),
+    img: url,
+    title,
+    description,
+    published: dateFormatter(createdAt),
+    lastUpdated: dateFormatter(updatedAt),
+    "published by": uploader.username,
+    "publisher avatar": uploader.avatar,
+    category,
   };
 
   res.status(200).json({ success: true, message: "Image details", imgData });
