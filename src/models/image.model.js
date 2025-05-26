@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dateFormatter from "../utils/date-formatter.js";
+import APIError from "../utils/ApiError.js";
 
 const imageSchema = new mongoose.Schema(
   {
@@ -46,6 +47,7 @@ const imageSchema = new mongoose.Schema(
         message:
           "Category must be a single word with no spaces. Only letters, numbers, and underscores allowed.",
       },
+      index: true,
     },
 
     uploaded_by: {
@@ -91,6 +93,36 @@ const imageSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+imageSchema.index(
+  { title: 1, description: 1, uploaded_by: 1 },
+  { unique: true },
+);
+
+//check if title, description, or uploaded_by is unique before saving
+imageSchema.pre("save", async function (next) {
+  if (this.isNew) {
+    const img = await mongoose.models.Image.findOne({
+      uploaded_by: this.uploaded_by,
+      $or: [{ title: this.title }, { description: this.description }],
+    });
+
+    if (img) {
+      let msg = "";
+      if (img.title === this.title) {
+        msg = `An image with this title [ ${img.title} ] already exits in your account, please try with different title.`;
+        return next(APIError.conflict(msg));
+      }
+
+      if (img.description === this.description) {
+        msg = `An image with this description [ ${img.description} ] already exits in your account, please try with different description.`;
+        return next(APIError.conflict(msg));
+      }
+    }
+  }
+
+  next();
+});
+
 imageSchema.virtual("uploader", {
   ref: "User",
   localField: "uploaded_by",
@@ -99,17 +131,28 @@ imageSchema.virtual("uploader", {
   options: { select: "-joined -lastUpdated", lean: true },
 });
 
+imageSchema.set("toObject", {
+  virtuals: true,
+  transform: (_, ret) => {
+    delete ret._id;
+    delete ret.id;
+
+    return ret;
+  },
+});
+
 imageSchema.set("toJSON", {
   virtuals: true,
   transform: (doc, ret) => {
-    const { _id, description, createdAt, updatedAt } = ret;
+    const { _id, description, createdAt, updatedAt, url } = ret;
 
     return {
       _id,
+      url,
       description,
-      uploaded: dateFormatter(createdAt),
-      updated: dateFormatter(updatedAt),
-      uploader: ret.uploader,
+      published: dateFormatter(createdAt),
+      lastUpdated: dateFormatter(updatedAt),
+      "published by": ret.uploader,
     };
   },
 });
