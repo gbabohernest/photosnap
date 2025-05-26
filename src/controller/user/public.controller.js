@@ -2,6 +2,8 @@ import Image from "../../models/image.model.js";
 import dateFormatter from "../../utils/date-formatter.js";
 import paginate from "../../utils/paginate.js";
 import { StatusCodes } from "http-status-codes";
+import APIError from "../../utils/ApiError.js";
+import API_SUCCESS_RESPONSES from "../../utils/api-success-responses.js";
 
 async function getImages(req, res) {
   const images = await paginate(Image, req, {
@@ -14,12 +16,15 @@ async function getImages(req, res) {
     return res.status(StatusCodes.OK).json({
       success: true,
       message: "No image found, sign up and start uploading.",
+      data: images,
     });
   }
 
-  res
-    .status(StatusCodes.OK)
-    .json({ success: true, message: "list of images", images });
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: API_SUCCESS_RESPONSES.image.LIST_OF_IMAGES,
+    images,
+  });
 }
 
 async function getImage(req, res) {
@@ -31,9 +36,7 @@ async function getImage(req, res) {
   );
 
   if (!image) {
-    return res
-      .status(StatusCodes.NOT_FOUND)
-      .json({ success: false, message: "Image not found!" });
+    throw APIError.notFound("Image not found");
   }
 
   image = image.toObject();
@@ -52,9 +55,11 @@ async function getImage(req, res) {
     category,
   };
 
-  res
-    .status(StatusCodes.OK)
-    .json({ success: true, message: "Image details", imgData });
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: API_SUCCESS_RESPONSES.image.IMG_DETAILS,
+    imgData,
+  });
 }
 
 export { getImage, getImages };
