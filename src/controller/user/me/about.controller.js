@@ -36,9 +36,16 @@ async function myUploads(req, res) {
     searchFields: ["title", "description", "category", "tags"],
   });
 
+  if (images.length === 0) {
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "You have not uploaded any data. Start uploading",
+    });
+  }
+
   res.status(StatusCodes.OK).json({
     success: true,
-    message: API_SUCCESS_RESPONSES.account.UPLOADS,
+    message: API_SUCCESS_RESPONSES.image.LIST_OF_IMAGES,
     data: images,
   });
 }
