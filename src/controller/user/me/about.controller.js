@@ -3,6 +3,7 @@ import User from "../../../models/user.model.js";
 import Image from "../../../models/image.model.js";
 import APIError from "../../../utils/ApiError.js";
 import paginate from "../../../utils/paginate.js";
+import { StatusCodes } from "http-status-codes";
 
 async function aboutMe(req, res) {
   const { userId } = req.userInfo;
@@ -16,7 +17,7 @@ async function aboutMe(req, res) {
     throw APIError.notFound("No user found!");
   }
 
-  res.status(200).json({
+  res.status(StatusCodes.OK).json({
     success: true,
     message: API_SUCCESS_RESPONSES.account.DETAILS,
     data: {
@@ -26,4 +27,20 @@ async function aboutMe(req, res) {
   });
 }
 
-export default aboutMe;
+async function myUploads(req, res) {
+  const { userId } = req.userInfo;
+
+  const images = await paginate(Image, req, {
+    filter: { uploaded_by: userId },
+    sort: "-updatedAt",
+    searchFields: ["title", "description", "category", "tags"],
+  });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: API_SUCCESS_RESPONSES.account.UPLOADS,
+    data: images,
+  });
+}
+
+export { aboutMe, myUploads };
