@@ -13,6 +13,7 @@ const API_SUCCESS_RESPONSES = {
     SIGN_IN: "SignIn successfully",
     SIGN_OUT: "Sign out successfully",
     DETAILS: "Account details retrieved successfully",
+    UPLOADS: "Uploads retrieved successfully",
   },
 };
 
