@@ -12,7 +12,7 @@ async function getImages(req, res) {
     virtual: "uploader",
   });
 
-  if (images.length === 0) {
+  if (images.data.length === 0) {
     return res.status(StatusCodes.OK).json({
       success: true,
       message: "No image found, sign up and start uploading.",
