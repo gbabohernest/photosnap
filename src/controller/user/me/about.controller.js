@@ -36,10 +36,10 @@ async function myUploads(req, res) {
     searchFields: ["title", "description", "category", "tags"],
   });
 
-  if (images.length === 0) {
+  if (images.data.length === 0) {
     return res.status(StatusCodes.OK).json({
       success: true,
-      message: "You have not uploaded any data. Start uploading",
+      message: "No Image(s) found!!",
     });
   }
 
