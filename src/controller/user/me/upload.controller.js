@@ -36,13 +36,11 @@ async function uploadImage(req, res, next) {
 
       return image[0];
     });
-    res
-      .status(StatusCodes.CREATED)
-      .json({
-        success: true,
-        message: API_SUCCESS_RESPONSES.image.IMG_UPLOAD,
-        image,
-      });
+    res.status(StatusCodes.CREATED).json({
+      success: true,
+      message: API_SUCCESS_RESPONSES.image.IMG_UPLOAD,
+      image,
+    });
   } catch (error) {
     if (imgPubId) {
       await deleteFromCloudinary(imgPubId);
