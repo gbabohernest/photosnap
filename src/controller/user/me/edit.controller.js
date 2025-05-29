@@ -17,13 +17,12 @@ async function editMe(req, res) {
   const user = await User.findById(userId, "", null);
 
   if (!user) {
-    throw APIError.notFound("User not found!");
+    throw APIError.notFound("User not found");
   }
 
   const { value, error } = updateUserSchema.validate(req.body);
 
   if (error) {
-    console.log(error);
     throw APIError.badRequest(error.details[0].message);
   }
 
@@ -56,7 +55,11 @@ async function updateAvatar(req, res) {
     null,
   );
 
-  if (user && user.avatarName !== DEFAULT_AVATAR_PUBLIC_ID) {
+  if (!user) {
+    throw APIError.notFound("User not found!");
+  }
+
+  if (user.avatarName !== DEFAULT_AVATAR_PUBLIC_ID) {
     await deleteFromCloudinary(user.avatarName);
   }
 

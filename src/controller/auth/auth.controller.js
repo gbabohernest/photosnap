@@ -39,13 +39,11 @@ async function signUp(req, res, next) {
     return user[0];
   });
 
-  res
-    .status(StatusCodes.CREATED)
-    .json({
-      success: true,
-      message: API_SUCCESS_RESPONSES.account.SIGN_UP,
-      user,
-    });
+  res.status(StatusCodes.CREATED).json({
+    success: true,
+    message: API_SUCCESS_RESPONSES.account.SIGN_UP,
+    user,
+  });
 }
 
 async function signIn(req, res, next) {
@@ -64,18 +62,22 @@ async function signIn(req, res, next) {
     secure: NODE_ENV === "production",
     sameSite: NODE_ENV === "production" ? "lax" : "strict",
   });
-  res
-    .status(StatusCodes.OK)
-    .json({
-      success: true,
-      message: API_SUCCESS_RESPONSES.account.SIGN_IN,
-      user,
-    });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: API_SUCCESS_RESPONSES.account.SIGN_IN,
+  });
 }
 
 async function signOut(req, res) {
+  res.cookie("auth", "", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: NODE_ENV === "production" ? "lax" : "strict",
+    maxAge: 1,
+  });
   res
     .status(StatusCodes.OK)
-    .json({ success: true, message: "Sign out success" });
+    .json({ success: true, message: API_SUCCESS_RESPONSES.account.SIGN_OUT });
 }
 export { signUp, signIn, signOut };
