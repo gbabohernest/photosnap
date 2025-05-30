@@ -2,6 +2,7 @@ import paginate from "../../../utils/paginate.js";
 import User from "../../../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import API_SUCCESS_RESPONSES from "../../../utils/api-success-responses.js";
+import Image from "../../../models/image.model.js";
 
 async function allUsers(req, res) {
   const users = await paginate(User, req, {
@@ -40,4 +41,21 @@ async function allImages(req, res) {
   });
 }
 
-export { allUsers, allImages };
+async function metrics(req, res) {
+  const [users, images] = await Promise.all([
+    paginate(User, req),
+    paginate(Image, req),
+  ]);
+
+  const totalUsers = users.nbHits;
+  const totalImages = images.nbHits;
+
+  const result = {
+    users: `Total registered users: ${totalUsers}`,
+    images: `Total numbers of uploaded images: ${totalImages}`,
+  };
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, message: "PhotoSnap Metrics", result });
+}
+export { allUsers, allImages, metrics };
