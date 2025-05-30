@@ -1,0 +1,43 @@
+import paginate from "../../../utils/paginate.js";
+import User from "../../../models/user.model.js";
+import { StatusCodes } from "http-status-codes";
+import API_SUCCESS_RESPONSES from "../../../utils/api-success-responses.js";
+
+async function allUsers(req, res) {
+  const users = await paginate(User, req, {
+    sort: { updatedAt: -1 },
+    searchFields: ["username"],
+  });
+
+  if (users.data.length === 0) {
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "There are no registered users" });
+  }
+
+  res
+    .status(StatusCodes.OK)
+    .json({ success: true, message: "A paginated list of users", users });
+}
+
+async function allImages(req, res) {
+  const images = await paginate(Image, req, {
+    sort: { updatedAt: -1 },
+    searchFields: ["title", "description", "tags", "category"],
+    virtual: "uploader",
+  });
+
+  if (images.data.length === 0) {
+    return res
+      .status(StatusCodes.OK)
+      .json({ success: true, message: "No images to display" });
+  }
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: API_SUCCESS_RESPONSES.image.LIST_OF_IMAGES,
+    images,
+  });
+}
+
+export { allUsers, allImages };
