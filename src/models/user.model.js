@@ -131,7 +131,7 @@ userSchema.set("toJSON", {
       ret;
 
     return {
-      _id,
+      // _id,
       username,
       email,
       password,

@@ -134,7 +134,7 @@ imageSchema.virtual("uploader", {
 imageSchema.set("toObject", {
   virtuals: true,
   transform: (_, ret) => {
-    delete ret._id;
+    // delete ret._id;
     delete ret.id;
 
     return ret;
@@ -150,8 +150,8 @@ imageSchema.set("toJSON", {
       _id,
       url,
       description,
-      published: dateFormatter(createdAt),
       lastUpdated: dateFormatter(updatedAt),
+      published: dateFormatter(createdAt),
       "published by": ret.uploader,
     };
   },

@@ -9,10 +9,16 @@ import {
 } from "../controller/user/me/edit.controller.js";
 
 import normalizeArrayFields from "../middleware/normalize-array-fields.middleware.js";
+import { aboutMe, myUploads } from "../controller/user/me/about.controller.js";
+import {
+  deleteMyAccount,
+  deleteImage,
+} from "../controller/user/me/delete.controller.js";
 
 const meRouter = new Router();
 
-meRouter.get("/about");
+meRouter.get("/about-me", auth, aboutMe);
+meRouter.get("/uploads", auth, myUploads);
 
 meRouter.post(
   "/uploads",
@@ -22,7 +28,7 @@ meRouter.post(
   uploadImage,
 );
 
-meRouter.patch("/update", auth, editMe);
+meRouter.patch("/update-user", auth, editMe);
 
 meRouter.patch("/update-avatar", auth, upload.single("avatar"), updateAvatar);
 
@@ -33,5 +39,8 @@ meRouter.patch(
   normalizeArrayFields(["tags"]),
   updateImage,
 );
+
+meRouter.delete("/uploads/:id", auth, deleteImage);
+meRouter.delete("/delete", auth, deleteMyAccount);
 
 export default meRouter;
