@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 
 /**
- * A helper function for database operations.
- * Operations that changes the state of our database (write operations)
+ * Wraps an operation inside a mongoose transaction.
+ * @param cb - async function that takes a session.
+ * @return {Promise<any>}result of the operation
  */
 
 async function transactionsHelper(cb) {
