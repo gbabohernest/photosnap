@@ -31,7 +31,7 @@ async function uploadImage(req, res, next) {
     const image = await transactionsHelper(async (session) => {
       const image = await Image.create(
         [{ ...value, url, publicId, uploaded_by: req.userInfo.userId }],
-        session,
+        { session },
       );
 
       return image[0];
