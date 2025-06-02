@@ -3,9 +3,15 @@ import { PORT } from "./config/env.config.js";
 import databaseConnection from "./config/database.config.js";
 import globalErrorMiddleware from "./middleware/error.middleware.js";
 import resourceNotFound from "./middleware/not-found.middleware.js";
+import { StatusCodes } from "http-status-codes";
 
 app.get("/", (req, res) => {
-  res.status(200).json({ success: true, message: "testing works" });
+  res
+    .status(StatusCodes.OK)
+    .send(
+      `<h1 style="text-align: center; font-family: Arial, sans-serif; color: #333; font-size: 2.5rem;">PhotoSnap API v1</h1>` +
+        `<a href="/api-docs" style="display: block; text-align: center; margin-top: 20px; font-size: 1.2rem; color: #007BFF; text-decoration: none;">Documentation</a>`,
+    );
 });
 
 app.use(globalErrorMiddleware);
