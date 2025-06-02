@@ -1,0 +1,610 @@
+openapi: 3.0.0
+
+info:
+  title: PhotoSnap API
+  description: A secure image gallery API using JWT stored in HTTP-only cookies
+  contact:
+    name: Ernest
+    email: gbaboh.ernest@gmail.com
+  version: '1.0'
+
+servers:
+  - url: https://photosnap-sl8f.onrender.com/api/v1
+
+paths:
+
+  /auth/sign-up:
+    post:
+      tags:
+        - Authentication
+      summary: Sign-up a new user
+      operationId: Sign-up
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sign-up-Request'
+            example:
+              username: your-username
+              email: your-email
+              password: your-password
+      responses:
+        '201':
+          description: Success response
+          # content:
+          #   application/json:
+          #     example:
+          #       success: true
+          #       message: "User created successfully"
+          #       data: {}
+      deprecated: false
+
+  /auth/sign-in:
+    post:
+      tags:
+        - Authentication
+      summary: Sign-in existing user
+      operationId: Sign-in
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sign-in-Request'
+            example:
+              email: your-email
+              password: your-password
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Login successful"
+      #           data: {}
+      deprecated: false
+
+  /auth/sign-out:
+    post:
+      tags:
+        - Authentication
+      summary: Sign-out and clear auth cookie
+      operationId: Sign-out
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Logout successful"
+      #           data: {}
+      deprecated: false
+
+  /me/uploads:
+    post:
+      tags:
+        - Uploads
+      summary: Upload a new image
+      operationId: Imageupload
+      security:
+        - jwtCookie: []
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: image-title
+                description:
+                  type: string
+                  example: image-description
+                tags:
+                  type: string
+                  example: [tags]
+                category:
+                  type: string
+                  example: image-category
+                image:
+                  type: string
+                  format: binary
+              required:
+                - title
+                - description
+                - tags
+                - image
+                - category
+      responses:
+        '201':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Image uploaded successfully"
+      #           data: {}
+      deprecated: false
+
+    get:
+      tags:
+        - Account details
+      summary: Get current user images  with pagination & filters
+      operationId: myimages
+      security:
+        - jwtCookie: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number (default:1)
+          required: false
+          schema:
+            type: integer
+            example: 1
+
+        - name: limit
+          in: query
+          description: Number of items per page (default:5)
+          required: false
+          schema:
+            type: integer
+            example: 5
+
+        - name: search
+          in: query
+          description: Filter images by keyword(title, description, tags, category)
+          required: false
+          schema:
+            type: string
+            example: nature
+
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Images fetched successfully"
+      #           data: []
+      deprecated: false
+
+  /public/images:
+    get:
+      tags:
+        - Public
+      summary: Get all public images with pagination and filters
+      operationId: Getimages
+      security: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number (default:1)
+          required: false
+          schema:
+            type: integer
+            example: 1
+
+        - name: limit
+          in: query
+          description: Number of items per page (default:5)
+          required: false
+          schema:
+            type: integer
+            example: 5
+
+        - name: search
+          in: query
+          description: Filter images by keyword(title, description, tags, category)
+          required: false
+          schema:
+            type: string
+            example: nature
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Public images fetched successfully"
+      #           data: []
+      deprecated: false
+
+  /public/images/{id}:
+    get:
+      tags:
+        - Public
+      summary: Get a single public image
+      operationId: Getanimage
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Image fetched successfully"
+      #           data: {}
+      deprecated: false
+
+  /me/update-user:
+    patch:
+      tags:
+        - Updates
+      summary: Update user info (partial update allowed)
+      operationId: updateuserinfo
+      security:
+        - jwtCookie: []
+      requestBody:
+        description: Optional fields for partial update
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateuserinforequest'
+            example:
+              username: your-new-username
+              email: your-new email
+              password: your-new-password
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "User info updated successfully"
+      #           data: {}
+      deprecated: false
+
+  /me/update-avatar:
+    patch:
+      tags:
+        - Updates
+      summary: Update user avatar
+      operationId: updateavatar
+      security:
+        - jwtCookie: []
+      requestBody:
+        required: false
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+              required:
+                - avatar
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Avatar updated successfully"
+      #           data: {}
+      deprecated: false
+
+  /me/uploads/{id}:
+    patch:
+      tags:
+        - Updates
+      summary: Update an image details
+      operationId: updateimage
+      security:
+        - jwtCookie: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Optional fields for partial update
+        required: false
+        content:
+          multipart/form-data:
+            encoding: {}
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: image-title
+                description:
+                  type: string
+                  example: image-description
+                tags:
+                  type: string
+                  example: [tags]
+                category:
+                  type: string
+                  example: image-category
+                image:
+                  type: string
+                  format: binary
+              #required:
+                # - title
+                # - description
+                # - tags
+                # - image
+                # - category
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Image description updated"
+      #           data: {}
+      deprecated: false
+
+    delete:
+      tags:
+        - Delete
+      summary: Delete an uploaded image
+      operationId: userdeleteimage
+      security:
+        - jwtCookie: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Image deleted successfully"
+      #           data: {}
+      deprecated: false
+
+  /me/about-me:
+    get:
+      tags:
+        - Account details
+      summary: Get current user's account details
+      operationId: aboutme
+      security:
+        - jwtCookie: []
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Account details fetched successfully"
+      #           data: {}
+      deprecated: false
+
+  /me/delete:
+    delete:
+      tags:
+        - Delete
+      summary: Delete user account
+      operationId: userdeleteaccount
+      security:
+        - jwtCookie: []
+      responses:
+        '204':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Account deleted successfully"
+      #           data: {}
+      deprecated: false
+
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      summary: Get all users with pagination & filters (Admin only)
+      operationId: users
+      security:
+        - jwtCookie: []
+
+      parameters:
+        - name: page
+          in: query
+          description: Page number (default:1)
+          required: false
+          schema:
+            type: integer
+            example: 1
+
+        - name: limit
+          in: query
+          description: Number of items per page (default:5)
+          required: false
+          schema:
+            type: integer
+            example: 5
+
+        - name: search
+          in: query
+          description: Filter users by keyword(username)
+          required: false
+          schema:
+            type: string
+            example: johndoe
+
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Users fetched successfully"
+      #           data: []
+      deprecated: false
+
+  /admin/images:
+    get:
+      tags:
+        - Admin
+      summary: Get all images with pagination & filters (Admin only)
+      operationId: images
+      security:
+        - jwtCookie: []
+
+      parameters:
+        - name: page
+          in: query
+          description: Page number (default:1)
+          required: false
+          schema:
+            type: integer
+            example: 1
+
+        - name: limit
+          in: query
+          description: Number of items per page (default:5)
+          required: false
+          schema:
+            type: integer
+            example: 5
+
+        - name: search
+          in: query
+          description: Filter images by keyword(title, description, tags, category)
+          required: false
+          schema:
+            type: string
+            example: nature
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Images fetched successfully"
+      #           data: []
+      deprecated: false
+
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Admin dashboard stats
+      operationId: dashboard
+      security:
+        - jwtCookie: []
+      responses:
+        '200':
+          description: Success response
+      #     content:
+      #       application/json:
+      #         example:
+      #           success: true
+      #           message: "Dashboard stats fetched successfully"
+      #           data: {}
+      deprecated: false
+
+components:
+  schemas:
+    Sign-up-Request:
+      title: Sign-up-Request
+      required:
+        - username
+        - email
+        - password
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        username:
+        email:
+        password:
+
+    Sign-in-Request:
+      title: Sign-in-Request
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email:
+        password:
+
+    updateuserinforequest:
+      title: updateuserinforequest
+      required:
+        - username
+        - email
+        - password
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        username:
+        email:
+        password:
+
+  securitySchemes:
+    jwtCookie:
+      type: apiKey
+      in: cookie
+      name: auth
+
+security:
+  - jwtCookie: []
+
+tags:
+  - name: Authentication
+    description: User Authentication Routes
+  - name: Uploads
+    description: Authenticated User(s) upload(s) operations
+  - name: Public
+    description: Public API endpoints
+  - name: Updates
+    description: Authenticated user update resource routes
+  - name: Account details
+    description: User account details
+  - name: Delete
+    description: Delete requests
+  - name: Admin
+    description: Admin routes
