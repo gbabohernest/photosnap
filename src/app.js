@@ -8,14 +8,24 @@ import sanitizeMiddleware from "./middleware/sanitize.middleware.js";
 import limiter from "./middleware/rate-limit.middleware.js";
 import helmet from "helmet";
 import cors from "cors";
+import path from "node:path";
+// import jsYaml from "js-yaml";
+import YAML from "yamljs";
+import { fileURLToPath } from "url";
+import swaggerUi from "swagger-ui-express";
 
 const app = express();
 app.set("trust proxy", 1);
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const apiDoc = YAML.load(path.join(__dirname, "swagger.yaml"));
+
 app.use(limiter);
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(sanitizeMiddleware);
 app.use(cookieParser());
 
@@ -23,5 +33,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/me", meRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/public", publicRouter);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(apiDoc));
 
 export default app;
