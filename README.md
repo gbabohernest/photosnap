@@ -29,3 +29,17 @@ All sensitive operations require authentication using JWT stored in HTTP-only co
 
 - **Once logged in, the JWT cookie will be used automatically for all protected routes**
 ---
+
+## 🌐 Public Routes
+These are accessible without authentication.
+
+
+| Method | Route                  | Description                          |
+|--------|------------------------|--------------------------------------|
+| GET    | `/public/images `      | Get list of all public images        |
+| GET    | `/public/images/{id} ` | Get details of a single public image |
+
+Supports:
+- Pagination (page, limit)
+- Filtering (search)
+     
