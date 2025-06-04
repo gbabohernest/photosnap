@@ -144,7 +144,7 @@ imageSchema.set("toObject", {
 imageSchema.set("toJSON", {
   virtuals: true,
   transform: (doc, ret) => {
-    const { _id, description, createdAt, updatedAt, url } = ret;
+    const { _id, description, createdAt, updatedAt, url, tags } = ret;
 
     return {
       _id,
@@ -153,6 +153,7 @@ imageSchema.set("toJSON", {
       lastUpdated: dateFormatter(updatedAt),
       published: dateFormatter(createdAt),
       "published by": ret.uploader,
+      tags,
     };
   },
 });
