@@ -126,3 +126,73 @@ Includes:
 
 ---
 
+## 🧹 Data Integrity
+To ensure consistency:
+
+ - DB operations are wrapped in transactions  where supported
+ - Deletions follow safe order: DB first , then Cloudinary
+ - Avatar/image updates cleanup old files from Cloudinary
+ - Account deletion removes all associated data
+
+---
+## 🧬 Error Handling
+Errors are handle by a custom error middleware and return consistent JSON format
+
+```json
+      {
+        "success": false,
+        "message": "Custom error message"
+      }
+```
+Includes proper HTTP status codes:
+ - `400 Bad Request`
+ - `401 Unauthorized`
+ - `403 Forbidden`
+ - `404 Not Found`
+ - `500 Internal Server Error`
+
+---
+
+## 📦 Installation & Setup
+
+1. Clone the project
+```bash
+      git clone https://github.com/gbabohernest/photosnap.git 
+      cd photosnap
+```
+
+2. Install dependencies 
+```bash
+      npm install 
+```
+
+3. Create `.env` file with all the values, the variables should be the same as the ones inside the `config/env.config.js` file. Their values are up to you.
+4. Run the server
+```bash
+      npm run dev
+```
+
+---
+
+## 🚀 Deployment 
+
+This project is deployed on Render free tier. Check it out here:  [LIVE URL]( https://photosnap-sl8f.onrender.com/api-docs)
+
+___
+
+## 📚 Contributing 
+
+If you'd like to contribute, feel free to open a PR or issue!
+
+---
+## 📞 Contact 
+
+Have questions or want to collaborate? 
+
+ - 📧 Gmail: [gmail](https://gbaboh.ernest@gmail.com)
+ - **Ernest Gbaboh** – [Github](https://github.com/gbabohernest)
+
+---
+## 🙌 Acknowledgements 
+
+Inspired by APIs like Unsplash and Pexels, built for learning and real-world usage. 
