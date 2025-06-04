@@ -1,8 +1,15 @@
 # 🖼️ PhotoSnap
-A secure and scalable image gallery API built with Express.js, MongoDB, Cloudinary, and JWT-based cookie authentication.
+A secure and scalable image gallery API built with **Express.js**, **MongoDB**, **Cloudinary**, and **JWT-based cookie authentication**.
 Think of it like Unsplash but simplified and exposed through an API-first approach
 
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+[![Deployed](https://img.shields.io/badge/Deployed-Live-green?style=for-the-badge)]( https://photosnap-sl8f.onrender.com/api-docs)
 
+---
 
 ## 🧾 Overview
 PhotoSnap is a RESTful API that allows users to: 
@@ -42,4 +49,19 @@ These are accessible without authentication.
 Supports:
 - Pagination (page, limit)
 - Filtering (search)
-     
+
+
+## 🔐 Authenticated User Routes
+Available only to signed-in users.
+
+
+| Method | Route               | Description                               |
+|--------|---------------------|-------------------------------------------|
+| POST   | `/me/uploads `      | Upload a new image                        |
+| GET    | `/me/uploads `      | Get list of user’s uploaded images        |
+| PATCH  | `/me/uploads/{id}`  | Update image metadata or replace image    |
+| DELETE | `/me/uploads/{id}`  | Delete an image                           |
+| GET    | `/me/about-me`      | Get current user info + total uploads     |
+| PATCH  | `/me/update-user`   | Update username/email/password            |
+| PATCH  | `/me/update-avatar` | Update profile avatar                     |
+| DELETE | `/me/delete`        | Delete user account + all associated data |
