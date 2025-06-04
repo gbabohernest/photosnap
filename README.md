@@ -96,3 +96,33 @@ Available only to admin users.
 
 ---
 
+## 🛠 Built With
+
+ - Node.js = Runtime environment
+ - Express.js  – Web framework
+ - MongoDB  – Database
+ - Mongoose  – ODM
+ - Cloudinary  – Image storage & delivery
+ - JWT  – Token-based authentication
+ - Cookie-parser  – Cookie handling
+ - Helmet  – Security headers
+ - CORS  – Cross-origin resource sharing
+ - Multer  – File upload middleware
+ - Joi  – Request validation
+ - DOMPurify  – Sanitize HTML inputs
+ - Day.js  – Lightweight date utility
+ - Bcrypt.js  – Password hashing
+ - Swagger UI  – Interactive API documentation
+
+---
+## 🧪 API Documentation 
+
+The full API spec is available via Swagger UI  and hosted on Render at: [API DOCS]( https://photosnap-sl8f.onrender.com/api-docs)
+Includes:
+ - Auth flow
+ - Example requests/responses
+ - Query params and body schema
+ - Status codes and error responses
+
+---
+
