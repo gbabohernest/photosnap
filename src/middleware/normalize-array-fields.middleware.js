@@ -14,7 +14,10 @@ function normalizeArrayFields(fields) {
         const value = req.body[fieldName];
 
         if (typeof value === "string") {
-          req.body[fieldName] = [value];
+          req.body[fieldName] = value
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean);
         }
       }
     }
