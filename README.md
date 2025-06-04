@@ -50,6 +50,7 @@ Supports:
 - Pagination (page, limit)
 - Filtering (search)
 
+---
 
 ## 🔐 Authenticated User Routes
 Available only to signed-in users.
@@ -65,3 +66,33 @@ Available only to signed-in users.
 | PATCH  | `/me/update-user`   | Update username/email/password            |
 | PATCH  | `/me/update-avatar` | Update profile avatar                     |
 | DELETE | `/me/delete`        | Delete user account + all associated data |
+
+---
+
+## 👤 Admin Routes (Admin Access Only)  
+
+Available only to admin users.
+
+
+| Method | Route              | Description                                       |
+|--------|--------------------|---------------------------------------------------|
+| GET    | `/admin/users`     | List all registered users                         |
+| GET    | `/admin/images `   | List all uploaded images                          |
+| GET    | `/admin/dashboard` | View dashboard stats (total users, uploads, etc.) |
+
+---
+
+## ⚙️ Features
+
+ -  **JWT Cookie-Based Authentication**
+ -  **Image Upload & Management via Cloudinary**
+ -  **User Profile Management**
+ -  **Avatar Upload & Cleanup**
+ -  **Pagination & Filtering Support**
+ -  **Security Headers via Helmet**
+ -  **CORS Configuration**
+ -  **Request Validation with Joi**
+ -  **Data Sanitization with DOMPurify**
+
+---
+
