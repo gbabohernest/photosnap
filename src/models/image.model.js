@@ -58,7 +58,6 @@ const imageSchema = new mongoose.Schema(
     },
 
     tags: {
-      // type: [String],
       type: mongoose.Schema.Types.Mixed,
       required: [true, "Tags are required"],
       validate: [
