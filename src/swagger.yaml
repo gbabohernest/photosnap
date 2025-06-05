@@ -502,12 +502,7 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Images fetched successfully"
-      #           data: []
+
       deprecated: false
 
   /admin/dashboard:
