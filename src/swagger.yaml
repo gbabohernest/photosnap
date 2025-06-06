@@ -33,12 +33,6 @@ paths:
       responses:
         '201':
           description: Success response
-          # content:
-          #   application/json:
-          #     example:
-          #       success: true
-          #       message: "User created successfully"
-          #       data: {}
       deprecated: false
 
   /auth/sign-in:
