@@ -446,12 +446,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Users fetched successfully"
-      #           data: []
       deprecated: false
 
   /admin/images:
