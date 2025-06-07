@@ -65,12 +65,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Logout successful"
-      #           data: {}
       deprecated: false
 
   /me/uploads:
