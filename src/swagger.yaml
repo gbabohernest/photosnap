@@ -222,12 +222,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "User info updated successfully"
-      #           data: {}
       deprecated: false
 
   /me/update-avatar:
