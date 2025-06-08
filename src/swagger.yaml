@@ -198,12 +198,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Image fetched successfully"
-      #           data: {}
       deprecated: false
 
   /me/update-user:
