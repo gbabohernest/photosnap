@@ -346,12 +346,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Account details fetched successfully"
-      #           data: {}
       deprecated: false
 
   /me/delete:
