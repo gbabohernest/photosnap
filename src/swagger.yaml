@@ -288,12 +288,7 @@ paths:
                 image:
                   type: string
                   format: binary
-              #required:
-                # - title
-                # - description
-                # - tags
-                # - image
-                # - category
+
       responses:
         '200':
           description: Success response
