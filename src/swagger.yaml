@@ -248,12 +248,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Avatar updated successfully"
-      #           data: {}
       deprecated: false
 
   /me/uploads/{id}:
