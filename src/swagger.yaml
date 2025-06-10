@@ -292,12 +292,6 @@ paths:
       responses:
         '200':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Image description updated"
-      #           data: {}
       deprecated: false
 
     delete:
