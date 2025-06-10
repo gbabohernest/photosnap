@@ -310,12 +310,6 @@ paths:
       responses:
         '204':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Image deleted successfully"
-      #           data: {}
       deprecated: false
 
   /me/about-me:
