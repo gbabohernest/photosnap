@@ -336,12 +336,6 @@ paths:
       responses:
         '204':
           description: Success response
-      #     content:
-      #       application/json:
-      #         example:
-      #           success: true
-      #           message: "Account deleted successfully"
-      #           data: {}
       deprecated: false
 
   /admin/users:
